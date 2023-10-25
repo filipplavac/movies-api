@@ -18,11 +18,9 @@ namespace movies_api.Controllers
 
         [Route("list")]
         [HttpGet]
-        public ActionResult<List<Title>> GetTitlesList()
+        public ActionResult<List<Title>> GetTitleList()
         {
-            string queryString = "SELECT * FROM title" +
-                " LIMIT @limit;";
-            int limit = 5;
+            string query = "SELECT * FROM \"GetTitleList\"(@limit);";
 
             List<Title> titles = new List<Title>();
             ActionResult result;
@@ -32,14 +30,14 @@ namespace movies_api.Controllers
             using (NpgsqlConnection connection = new NpgsqlConnection(_databaseService.ConnectionString()))
             {
                 // Stvaramo naredbu koju ćemo okinuti o bazu i dodajemo vrijednost @limit parametru u queryString-u
-                NpgsqlCommand command = new NpgsqlCommand(queryString, connection);
-                command.Parameters.AddWithValue("@limit", limit);
+                NpgsqlCommand command = new NpgsqlCommand(query, connection);
+                command.Parameters.AddWithValue("@limit", 5);
 
                 try
                 {
                     connection.Open();
 
-                    // ExecuteReader stvara reader kako bismo iščitali redove iz tablice i daje mu queryString iz naredbe.
+                    // ExecuteReader stvara reader kako bismo iščitali redove iz tablice i daje mu query iz naredbe.
                     NpgsqlDataReader reader = command.ExecuteReader();
                     // Read metoda pomiče reader na sljedeći red.
                     while (reader.Read())
