@@ -28,7 +28,7 @@ namespace movies_api.Controllers
             // Ne želimo biti stalno spojeni na bazu, niti želimo memory leakove.
             using (NpgsqlConnection connection = new NpgsqlConnection(_databaseService.ConnectionString()))
             {
-                string query = "SELECT * FROM \"GetTitleList_Cursor\"(@limit, @cursor);";
+                string query = "SELECT * FROM \"GetTitleList\"(@limit, @cursor);";
 
                 // Stvaramo naredbu koju ćemo okinuti o bazu i dodajemo vrijednost @limit parametru u queryString-u
                 NpgsqlCommand command = new NpgsqlCommand(query, connection);
