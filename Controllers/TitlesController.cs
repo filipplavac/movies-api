@@ -24,13 +24,14 @@ namespace movies_api.Controllers
             List<Title> titles = new ();
             string nextCursor;
 
-            // using - naredba koja osigurava uništavanje objekta danog kao argument
-            // Ne želimo biti stalno spojeni na bazu, niti želimo memory leakove.
+            // using - the using statement defines a scope at the end of which an object is disposed.
+            // The database connection must be disposed in order to prevent memory leaks.
             using (NpgsqlConnection connection = new NpgsqlConnection(_databaseService.ConnectionString()))
             {
                 string query = "SELECT * FROM \"GetTitleList\"(@limit, @cursor);";
 
-                // Stvaramo naredbu koju ćemo okinuti o bazu i dodajemo vrijednost @limit parametru u queryString-u
+                // First, declare and instantiate the command object, which will interact with the database.
+                // Afterwards, we provide it with the values for parameters in the query.
                 NpgsqlCommand command = new NpgsqlCommand(query, connection);
                 command.Parameters.AddWithValue("@limit", pageSize + 1);
                 command.Parameters.AddWithValue("@cursor", cursor != null ? cursor : DBNull.Value);
@@ -39,9 +40,10 @@ namespace movies_api.Controllers
                 {
                     connection.Open();
 
-                    // ExecuteReader stvara reader kako bismo iščitali redove iz tablice i daje mu query iz naredbe.
+                    // ExecuteReader method executes the command text (query) against the connection.
+                    // It also returns a reader object.
                     NpgsqlDataReader reader = command.ExecuteReader();
-                    // Read metoda pomiče reader na sljedeći red.
+                    // The Read method advances the reader to the next record in the result set.
                     while (reader.Read())
                     {
                         Title title = new Title
@@ -57,10 +59,10 @@ namespace movies_api.Controllers
                         };
                         titles.Add(title);
                     }
-                    // Nakon što više nema redova zatvaramo reader.
+                    // Close the reader after there are no more results.
                     reader.Close();
 
-                    // Izbaci zadnji redak i pošalji ga kao cursor.
+                    // Remove the last result and use its id as a cursor for the next request.
                     nextCursor = titles.Last().Id;
                     titles.RemoveAt(titles.Count - 1);
 
