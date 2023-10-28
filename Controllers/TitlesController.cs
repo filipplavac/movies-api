@@ -1,37 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using movies_api.Interfaces;
 using movies_api.Models;
+using movies_api.Results;
 using Npgsql;
 
 namespace movies_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/titles")]
     [ApiController]
     public class TitlesController : ControllerBase
     {
         private IDatabaseService _databaseService;
         public TitlesController(
-            IDatabaseService databaseService) 
-        { 
+            IDatabaseService databaseService)
+        {
             _databaseService = databaseService;
         }
 
         [Route("list")]
         [HttpGet]
-        public ActionResult<List<Title>> GetTitleList()
+        public ActionResult<TitleListResult> GetTitleList([FromQuery] string? cursor = null, [FromQuery] int pageSize = 10)
         {
-            string query = "SELECT * FROM \"GetTitleList\"(@limit);";
-
-            List<Title> titles = new List<Title>();
-            ActionResult result;
+            List<Title> titles = new ();
+            string nextCursor;
 
             // using - naredba koja osigurava uništavanje objekta danog kao argument
             // Ne želimo biti stalno spojeni na bazu, niti želimo memory leakove.
             using (NpgsqlConnection connection = new NpgsqlConnection(_databaseService.ConnectionString()))
             {
+                string query = "SELECT * FROM \"GetTitleList_Cursor\"(@limit, @cursor);";
+
                 // Stvaramo naredbu koju ćemo okinuti o bazu i dodajemo vrijednost @limit parametru u queryString-u
                 NpgsqlCommand command = new NpgsqlCommand(query, connection);
-                command.Parameters.AddWithValue("@limit", 5);
+                command.Parameters.AddWithValue("@limit", pageSize + 1);
+                command.Parameters.AddWithValue("@cursor", cursor != null ? cursor : DBNull.Value);
 
                 try
                 {
@@ -58,16 +60,18 @@ namespace movies_api.Controllers
                     // Nakon što više nema redova zatvaramo reader.
                     reader.Close();
 
-                    result = Ok(titles);
+                    // Izbaci zadnji redak i pošalji ga kao cursor.
+                    nextCursor = titles.Last().Id;
+                    titles.RemoveAt(titles.Count - 1);
+
+                    return Ok(new TitleListResult(titles, nextCursor));
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
-                    result = StatusCode(500);
+                    return StatusCode(500);
                 }
             }
-
-            return result;
         }
     }
 }
