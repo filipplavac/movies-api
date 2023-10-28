@@ -22,7 +22,7 @@ namespace movies_api.Controllers
         public ActionResult<TitleListResult> GetTitleList([FromQuery] string? cursor = null, [FromQuery] int pageSize = 10)
         {
             List<Title> titles = new ();
-            string nextCursor;
+            string? nextCursor;
 
             // using - the using statement defines a scope at the end of which an object is disposed.
             // The database connection must be disposed in order to prevent memory leaks.
@@ -62,9 +62,13 @@ namespace movies_api.Controllers
                     // Close the reader after there are no more results.
                     reader.Close();
 
-                    // Remove the last result and use its id as a cursor for the next request.
-                    nextCursor = titles.Last().Id;
-                    titles.RemoveAt(titles.Count - 1);
+                    // Set the cursor to the id of the last result in titles. Set it to null if last page was recieved.
+                    nextCursor = titles.Count == pageSize ? titles.Last().Id : null;
+                    // Remove the last result from titles if there are more pages left.
+                    if (nextCursor != null)
+                    {
+                        titles.RemoveAt(titles.Count - 1);
+                    }
 
                     return Ok(new TitleListResult(titles, nextCursor));
                 }
