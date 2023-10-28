@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using movies_api.Interfaces;
+using movies_api.Contracts.ServiceInterfaces;
 using movies_api.Models;
 using movies_api.Results;
 using Npgsql;
@@ -26,7 +26,7 @@ namespace movies_api.Controllers
 
             // using - the using statement defines a scope at the end of which an object is disposed.
             // The database connection must be disposed in order to prevent memory leaks.
-            using (NpgsqlConnection connection = new NpgsqlConnection(_databaseService.ConnectionString()))
+            using (NpgsqlConnection connection = new NpgsqlConnection(_databaseService.ConnectionString))
             {
                 string query = "SELECT * FROM \"GetTitleList\"(@limit, @cursor);";
 

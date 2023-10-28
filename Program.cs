@@ -1,4 +1,4 @@
-using movies_api.Interfaces;
+using movies_api.Contracts.ServiceInterfaces;
 using movies_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
