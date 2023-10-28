@@ -6,7 +6,7 @@ namespace movies_api.Results
     {
         public string? Cursor { get; }
         public List<Title>? Titles { get; }
-        public TitleListResult(List<Title> titles, string cursor) 
+        public TitleListResult(List<Title>? titles, string? cursor) 
         { 
             Cursor = cursor;
             Titles = titles;
