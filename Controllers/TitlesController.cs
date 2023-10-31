@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using movies_api.Contracts.ServiceInterfaces;
 using movies_api.Models;
-using movies_api.Results;
+using movies_api.Contracts.Results;
 using Npgsql;
+using movies_api.Contracts.Dtos;
 
 namespace movies_api.Controllers
 {
@@ -21,7 +22,7 @@ namespace movies_api.Controllers
         [HttpGet]
         public ActionResult<TitleListResult> GetTitleList([FromQuery] string? cursor = null, [FromQuery] int pageSize = 10)
         {
-            List<Title> titles = new ();
+            List<TitleDto> titles = new ();
             string? nextCursor;
 
             // using - the using statement defines a scope at the end of which an object is disposed.
@@ -39,31 +40,20 @@ namespace movies_api.Controllers
                 try
                 {
                     connection.Open();
-
                     // ExecuteReader method executes the command text (query) against the connection.
                     // It also returns a reader object.
                     NpgsqlDataReader reader = command.ExecuteReader();
                     // The Read method advances the reader to the next record in the result set.
                     while (reader.Read())
                     {
-                        Title title = new Title
-                        {
-                            Id = reader["title_id"].ToString(),
-                            ContentTypeId = reader["content_type_id"].Equals(DBNull.Value) ? null : Convert.ToInt32(reader["content_type_id"]),
-                            PrimaryTitle = reader["primary_title"].Equals(DBNull.Value) ? null : reader["primary_title"].ToString(),
-                            OriginalTitle = reader["original_title"].Equals(DBNull.Value) ? null : reader["original_title"].ToString(),
-                            IsAdult = reader["is_adult"].Equals(DBNull.Value) ? null : Convert.ToInt32(reader["is_adult"]),
-                            StartYear = reader["start_year"].Equals(DBNull.Value) ? null : Convert.ToInt32(reader["start_year"]),
-                            EndYear = reader["end_year"].Equals(DBNull.Value) ? null : Convert.ToInt32(reader["end_year"]),
-                            RuntimeMinutes = reader["runtime_minutes"].Equals(DBNull.Value) ? null : Convert.ToInt32(reader["runtime_minutes"])
-                        };
-                        titles.Add(title);
+                        Title title = Title.FromRecord(reader);
+                        titles.Add(title.ToDto());
                     }
                     // Close the reader after there are no more results.
                     reader.Close();
 
-                    // Set the cursor to the id of the last result in titles. Set it to null if last page was recieved.
-                    nextCursor = titles.Count == pageSize ? titles.Last().Id : null;
+                    // Set the cursor to the id of the last result in titles. Set it to null if last page was recieved from the database.
+                    nextCursor = titles.Count > pageSize ? titles.Last().Id : null;
                     // Remove the last result from titles if there are more pages left.
                     if (nextCursor != null)
                     {
