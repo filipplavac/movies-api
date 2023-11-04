@@ -20,14 +20,11 @@ namespace movies_api.Controllers
         [HttpGet]
         public async Task<ActionResult<TitleListResult>> GetTitleList([FromQuery] string? cursor = null, [FromQuery] int pageSize = 10)
         {
-            List<TitleDto> titles = new ();
-            string? nextCursor;
-
             try
             {
-                titles = await _titleService.GetList(cursor, pageSize);
+                List<TitleDto> titles = await _titleService.GetList(cursor, pageSize);
                 // Set the cursor to the id of the last result in titles. Set it to null if last page was recieved from the database.
-                nextCursor = titles.Count > pageSize ? titles.Last().Id : null;
+                string? nextCursor = titles.Count > pageSize ? titles.Last().Id : null;
                 // Remove the last result from titles if there are more pages left.
                 if (nextCursor != null)
                 {
@@ -36,7 +33,7 @@ namespace movies_api.Controllers
 
                 return Ok(new TitleListResult(titles, nextCursor));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return StatusCode(500);
