@@ -1,3 +1,4 @@
+using movies_api.Contracts.Dtos;
 using movies_api.Contracts.ServiceInterfaces;
 using movies_api.Services;
 
@@ -11,7 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Dependency Injection
-builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
+//builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
+builder.Services.AddScoped<IDatabaseService<TitleDto>, TitleService>();
 
 var app = builder.Build();
 
