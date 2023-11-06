@@ -1,4 +1,4 @@
-﻿namespace movies_api.Contracts.Dtos
+﻿namespace movies_api.Contracts.DTOs
 {
     public record TitleDto
     (

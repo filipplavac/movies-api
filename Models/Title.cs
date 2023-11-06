@@ -1,4 +1,4 @@
-﻿using movies_api.Contracts.Dtos;
+﻿using movies_api.Contracts.DTOs;
 using Npgsql;
 
 namespace movies_api.Models

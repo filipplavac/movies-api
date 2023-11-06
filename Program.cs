@@ -1,7 +1,9 @@
-using movies_api.Contracts.Dtos;
-using movies_api.Contracts.ServiceInterfaces;
-using movies_api.Services;
+using movies_api.Contracts.DTOs;
+using movies_api.Contracts.RepositoryInterfaces;
+using movies_api.DAL;
 using Npgsql;
+using System.Data;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Dependency Injection
-builder.Services.AddScoped<IDatabaseService<TitleDto>, TitleService>();
+builder.Services.AddScoped<IRepository<TitleDto>, TitleRepository>();
 
 var app = builder.Build();
 

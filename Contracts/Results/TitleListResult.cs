@@ -1,4 +1,4 @@
-﻿using movies_api.Contracts.Dtos;
+﻿using movies_api.Contracts.DTOs;
 
 namespace movies_api.Contracts.Results
 {

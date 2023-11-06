@@ -1,18 +1,17 @@
-﻿using movies_api.Contracts.Dtos;
-using movies_api.Contracts.Results;
-using movies_api.Contracts.ServiceInterfaces;
+﻿using movies_api.Contracts.DTOs;
+using movies_api.Contracts.RepositoryInterfaces;
 using movies_api.Models;
 using Npgsql;
 
-namespace movies_api.Services
+namespace movies_api.DAL
 {
-    public class TitleService : IDatabaseService<TitleDto>
+    public class TitleRepository : IRepository<TitleDto>
     {
         private readonly IConfiguration _configuration;
         private readonly string? _connectionString;
         private const string GetListQuery = "SELECT * FROM \"GetTitleList\"(@limit, @cursor);";
 
-        public TitleService(
+        public TitleRepository(
             IConfiguration configuration)
         {
             _configuration = configuration;

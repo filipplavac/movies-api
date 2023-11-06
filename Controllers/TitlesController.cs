@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using movies_api.Contracts.ServiceInterfaces;
 using movies_api.Contracts.Results;
-using movies_api.Contracts.Dtos;
+using movies_api.Contracts.DTOs;
+using movies_api.Contracts.RepositoryInterfaces;
 
 namespace movies_api.Controllers
 {
@@ -9,11 +9,11 @@ namespace movies_api.Controllers
     [ApiController]
     public class TitlesController : ControllerBase
     {
-        private IDatabaseService<TitleDto> _titleService;
+        private IRepository<TitleDto> _titleRepository;
         public TitlesController(
-            IDatabaseService<TitleDto> titleService)
+            IRepository<TitleDto> titleRepository)
         {
-            _titleService = titleService;
+            _titleRepository = titleRepository;
         }
 
         [Route("list")]
@@ -22,7 +22,7 @@ namespace movies_api.Controllers
         {
             try
             {
-                List<TitleDto> titles = await _titleService.GetList(cursor, pageSize);
+                List<TitleDto> titles = await _titleRepository.GetList(cursor, pageSize);
                 // Set the cursor to the id of the last result in titles. Set it to null if last page was recieved from the database.
                 string? nextCursor = titles.Count > pageSize ? titles.Last().Id : null;
                 // Remove the last result from titles if there are more pages left.
