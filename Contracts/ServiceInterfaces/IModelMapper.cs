@@ -1,6 +1,6 @@
 ﻿using Npgsql;
 
-namespace movies_api.Contracts.RepositoryIntefaces
+namespace movies_api.Contracts.ServiceInterfaces
 {
     public interface IModelMapper<TModel, TDto> where TModel : class where TDto : class
     {
