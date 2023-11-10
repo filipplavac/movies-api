@@ -4,9 +4,6 @@ using movies_api.Contracts.ServiceInterfaces;
 using movies_api.Contracts.RepositoryInterfaces;
 using movies_api.DAL;
 using movies_api.Models;
-using Npgsql;
-using System.Data;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
