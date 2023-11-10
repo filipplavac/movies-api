@@ -1,30 +1,34 @@
 ﻿using movies_api.Contracts.DTOs;
+using movies_api.Contracts.RepositoryIntefaces;
 using movies_api.Contracts.RepositoryInterfaces;
 using movies_api.Models;
 using Npgsql;
 
 namespace movies_api.DAL
 {
-    public class TitleRepository : IRepository<TitleDto>
+    // Single responsibility: interact with the database.
+    public class TitleRepository : Db, IRepository<TitleDto>
     {
-        private readonly IConfiguration _configuration;
-        private readonly string? _connectionString;
+
+        // Dependencies
+        private readonly IModelMapper<Title, TitleDto> _titleMapper;
+        // Queries
         private const string GetListQuery = "SELECT * FROM \"GetTitleList\"(@limit, @cursor);";
 
         public TitleRepository(
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IModelMapper<Title,TitleDto> titleMapper) : base(configuration)
         {
-            _configuration = configuration;
-            _connectionString = _configuration.GetConnectionString("postgres");
+            _titleMapper = titleMapper;
         }
-
+  
         public async Task<List<TitleDto>> GetList(string? cursor, int pageSize)
         {
             List<TitleDto> titles = new ();
 
-            using NpgsqlConnection connection = new(_connectionString);
+            using NpgsqlConnection connection = CreatePostgresConnection();
+            NpgsqlCommand command = CreatePostgresCommand(GetListQuery, connection);
 
-            NpgsqlCommand command = new(GetListQuery, connection);
             command.Parameters.AddWithValue("@limit", pageSize + 1);
             command.Parameters.AddWithValue("@cursor", cursor != null ? cursor : DBNull.Value);
 
@@ -32,8 +36,8 @@ namespace movies_api.DAL
             NpgsqlDataReader reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                Title title = Title.FromRecord(reader);
-                titles.Add(title.ToDto());
+                Title title = _titleMapper.RecordToModel(reader);
+                titles.Add(_titleMapper.ModelToDto(title));
             }
             reader.Close();
 

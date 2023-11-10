@@ -2,13 +2,14 @@
 using movies_api.Contracts.Results;
 using movies_api.Contracts.DTOs;
 using movies_api.Contracts.RepositoryInterfaces;
+using movies_api.Models;
 
 namespace movies_api.Controllers
 {
     [Route("api/titles")]
     [ApiController]
     public class TitlesController : ControllerBase
-    {
+    {   
         private IRepository<TitleDto> _titleRepository;
         public TitlesController(
             IRepository<TitleDto> titleRepository)
