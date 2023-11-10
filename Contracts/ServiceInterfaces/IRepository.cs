@@ -1,4 +1,4 @@
-﻿namespace movies_api.Contracts.RepositoryInterfaces
+﻿namespace movies_api.Contracts.ServiceInterfaces
 {
     public interface IRepository<TEntity> where TEntity : class
     {

@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using movies_api.Contracts.Results;
 using movies_api.Contracts.DTOs;
-using movies_api.Contracts.RepositoryInterfaces;
-using movies_api.Models;
+using movies_api.Contracts.ServiceInterfaces;
 
 namespace movies_api.Controllers
 {

@@ -1,6 +1,5 @@
 ﻿using movies_api.Contracts.DTOs;
 using movies_api.Contracts.ServiceInterfaces;
-using movies_api.Contracts.RepositoryInterfaces;
 using movies_api.Models;
 using Npgsql;
 

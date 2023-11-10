@@ -2,7 +2,6 @@
 using movies_api.Contracts.ServiceInterfaces;
 using movies_api.Models;
 using Npgsql;
-using System.Net.Mime;
 
 namespace movies_api.Common.Mapping
 {
