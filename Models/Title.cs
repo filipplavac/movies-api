@@ -3,6 +3,7 @@ using Npgsql;
 
 namespace movies_api.Models
 {
+    // Single responsibility: encapsulate the properties and behaviour of Title entity.
     public class Title 
     {
         public required string Id { get; set; }

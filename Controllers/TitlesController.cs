@@ -7,6 +7,7 @@ namespace movies_api.Controllers
 {
     [Route("api/titles")]
     [ApiController]
+    // Single responsibility: provide CRUD endpoints for the Title entity.
     public class TitlesController : ControllerBase
     {   
         private IRepository<TitleDto> _titleRepository;
@@ -18,7 +19,7 @@ namespace movies_api.Controllers
 
         [Route("list")]
         [HttpGet]
-        public async Task<ActionResult<TitleListResult>> GetTitleList([FromQuery] string? cursor = null, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<GetTitleListResult>> GetTitleList([FromQuery] string? cursor = null, [FromQuery] int pageSize = 10)
         {
             try
             {
@@ -31,7 +32,7 @@ namespace movies_api.Controllers
                     titles.RemoveAt(titles.Count - 1);
                 }
 
-                return Ok(new TitleListResult(titles, nextCursor));
+                return Ok(new GetTitleListResult(titles, nextCursor));
             }
             catch (Exception ex)
             {

@@ -1,6 +1,7 @@
 ﻿namespace movies_api.Contracts.DTOs
 {
-    public record TitleDto
+    // Single responsibility: encapsulate data of the Title entity.
+    public record class TitleDto
     (
         string Id,
         int? ContentTypeId,

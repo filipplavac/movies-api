@@ -4,6 +4,7 @@ using System.Data.Common;
 
 namespace movies_api.DAL
 {
+    // Single responsibility: encapsulate common functionality for all data providers.
     public abstract class Db
     {
         protected readonly IConfiguration _configuration;
