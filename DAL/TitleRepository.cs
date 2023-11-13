@@ -21,15 +21,18 @@ namespace movies_api.DAL
             _titleMapper = titleMapper;
         }
   
-        public async Task<List<TitleDto>> GetList(string? cursor, int pageSize)
+        public async Task<List<TitleDto>> GetList(string? cursor, int pageSize, string? filter)
         {
             List<TitleDto> titles = new ();
+
+            string where = null;
 
             using NpgsqlConnection connection = CreatePostgresConnection();
             NpgsqlCommand command = CreatePostgresCommand(GetListQuery, connection);
 
             command.Parameters.AddWithValue("@limit", pageSize + 1);
             command.Parameters.AddWithValue("@cursor", cursor != null ? cursor : DBNull.Value);
+            command.Parameters.AddWithValue("@where", where != null ? where : DBNull.Value);
 
             connection.Open();
             NpgsqlDataReader reader = await command.ExecuteReaderAsync();

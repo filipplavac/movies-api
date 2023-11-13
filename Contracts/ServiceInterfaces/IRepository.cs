@@ -2,7 +2,7 @@
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        public Task<List<TEntity>> GetList(string? cursor, int pageSize);
+        public Task<List<TEntity>> GetList(string? cursor, int pageSize, string? filter);
         //public T Get(string id);
         //public T Create(T entity);
         //public void Update(T entity);
