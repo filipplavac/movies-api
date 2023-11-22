@@ -14,7 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Dependency Injection
-builder.Services.AddScoped<IRepository<TitleDto>, TitleRepository>();
+builder.Services.AddScoped<IRepository<TitleDto, TitleListFilterDto>, TitleRepository>();
 builder.Services.AddScoped<IModelMapper<Title, TitleDto>, TitleMapper>();
 
 var app = builder.Build();

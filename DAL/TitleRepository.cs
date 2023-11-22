@@ -6,22 +6,25 @@ using Npgsql;
 namespace movies_api.DAL
 {
     // Single responsibility: interact with the database.
-    public class TitleRepository : Db, IRepository<TitleDto>
+    public class TitleRepository : Db, IRepository<TitleDto, TitleListFilterDto>
     {
 
         // Dependencies
         private readonly IModelMapper<Title, TitleDto> _titleMapper;
+
         // Queries
         private const string GetListQuery = "SELECT * FROM \"GetTitleList\"(@limit, @cursor);";
 
-        public TitleRepository(
+        public TitleRepository
+        (
             IConfiguration configuration,
-            IModelMapper<Title,TitleDto> titleMapper) : base(configuration)
+            IModelMapper<Title, TitleDto> titleMapper
+        ) : base(configuration)
         {
             _titleMapper = titleMapper;
         }
   
-        public async Task<List<TitleDto>> GetList(string? cursor, int pageSize, string? filter)
+        public async Task<List<TitleDto>> GetList(string? cursor, int pageSize, TitleListFilterDto? filter)
         {
             List<TitleDto> titles = new ();
 
