@@ -2,6 +2,8 @@
 using movies_api.Contracts.Results;
 using movies_api.Contracts.DTOs;
 using movies_api.Contracts.ServiceInterfaces;
+using movies_api.Models;
+using System.Text.Json;
 
 namespace movies_api.Controllers
 {
@@ -10,9 +12,11 @@ namespace movies_api.Controllers
     // Single responsibility: provide CRUD endpoints for the Title entity.
     public class TitleController : ControllerBase
     {   
-        private readonly IRepository<TitleDto> _titleRepository;
-        public TitleController(
-            IRepository<TitleDto> titleRepository)
+        private readonly IRepository<TitleDto, TitleListFilterDto> _titleRepository;
+        public TitleController
+        (
+            IRepository<TitleDto, TitleListFilterDto> titleRepository
+        )
         {
             _titleRepository = titleRepository;
         }
@@ -23,7 +27,8 @@ namespace movies_api.Controllers
         {
             try
             {
-                List<TitleDto> titles = await _titleRepository.GetList(cursor, pageSize, filter);
+                TitleListFilterDto? deserializedFilter = JsonSerializer.Deserialize<TitleListFilterDto>(filter);
+                List<TitleDto> titles = await _titleRepository.GetList(cursor, pageSize, deserializedFilter);
                 // Set the cursor to the id of the last result in titles. Set it to null if last page was recieved from the database.
                 string? nextCursor = titles.Count > pageSize ? titles.Last().Id : null;
                 // Remove the last result from titles if there are more pages left.
